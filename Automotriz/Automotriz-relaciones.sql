@@ -9,4 +9,3 @@ ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDEmpleado") REFERENCES "Empl
 ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDServicio") REFERENCES "Servicios" ("IDServicio");
 ALTER TABLE "SegurosAuto" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
 ALTER TABLE "SegurosAuto" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
---ALTER TABLE "Clientes" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("Nombre");

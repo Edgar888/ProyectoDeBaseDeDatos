@@ -8,9 +8,9 @@ CREATE TABLE "Clientes" (
 
 CREATE TABLE "Autos" (
   "IDAuto" serial PRIMARY KEY,
-  "Modelo" varchar(50) NOT NULL,
+  "Modelo" ModeloAutomovil,
   "Marca" varchar(50) NOT NULL,
-  "AnioFabricacion" int NOT NULL CHECK("AnioFabricacion" > 0),
+  "AnioFabricacion" int NOT NULL CHECK("AnioFabricacion" > 1900),
   "Precio" decimal(10,2) NOT NULL CHECK("Precio" >= 0.0)
 );
 
