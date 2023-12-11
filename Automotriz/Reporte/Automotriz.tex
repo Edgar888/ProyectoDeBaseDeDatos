@@ -150,61 +150,72 @@
 
     \subsection*{4. Script Completo para Crear la Base de Datos}
     \begin{lstlisting}[language=SQL]
+-- Creacion de Tablas
 CREATE TABLE "Clientes" (
   "IDCliente" serial PRIMARY KEY,
-  "Nombre" varchar(255),
-  "Direccion" text,
-  "Telefono" varchar(15)
+  "Nombre" varchar(255) NOT NULL,
+  "Direccion" text NOT NULL,
+  "Telefono" varchar(15) NOT NULL CHECK(length("Telefono") > 0)
 );
 
 CREATE TABLE "Autos" (
   "IDAuto" serial PRIMARY KEY,
-  "Modelo" varchar(50),
-  "Marca" varchar(50),
-  "AnioFabricacion" int,
-  "Precio" decimal(10,2)
+  "Modelo" varchar(50) NOT NULL,
+  "Marca" varchar(50) NOT NULL,
+  "AnioFabricacion" int NOT NULL CHECK("AnioFabricacion" > 0),
+  "Precio" decimal(10,2) NOT NULL CHECK("Precio" >= 0.0)
 );
 
 CREATE TABLE "Empleados" (
   "IDEmpleado" serial PRIMARY KEY,
-  "Nombre" varchar(255),
-  "Direccion" text,
-  "Telefono" varchar(15),
-  "Rol" varchar(50)
+  "Nombre" varchar(255) NOT NULL,
+  "Direccion" text NOT NULL,
+  "Telefono" varchar(15) NOT NULL CHECK(length("Telefono") > 0),
+  "Rol" varchar(50) NOT NULL
 );
 
 CREATE TABLE "Servicios" (
   "IDServicio" serial PRIMARY KEY,
-  "NombreServicio" varchar(100),
-  "Descripcion" text,
-  "Precio" decimal(10,2)
+  "NombreServicio" varchar(100) NOT NULL,
+  "Descripcion" text NOT NULL,
+  "Precio" decimal(10,2) NOT NULL CHECK("Precio" >= 0.0)
 );
 
 CREATE TABLE "Mantenimientos" (
   "IDMantenimiento" serial PRIMARY KEY,
-  "IDAuto" int,
-  "IDCliente" int,
-  "IDEmpleado" int,
-  "IDServicio" int,
-  "FechaMantenimiento" date
+  "IDAuto" int NOT NULL,
+  "IDCliente" int NOT NULL,
+  "IDEmpleado" int NOT NULL,
+  "IDServicio" int NOT NULL,
+  "FechaMantenimiento" date NOT NULL,
+  FOREIGN KEY ("IDAuto") REFERENCES "Autos"("IDAuto") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDCliente") REFERENCES "Clientes"("IDCliente") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDEmpleado") REFERENCES "Empleados"("IDEmpleado") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDServicio") REFERENCES "Servicios"("IDServicio") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE "HojalateriaPintura" (
   "IDHojalateriaPintura" serial PRIMARY KEY,
-  "IDAuto" int,
-  "IDCliente" int,
-  "IDEmpleado" int,
-  "IDServicio" int,
-  "FechaHojalateriaPintura" date
+  "IDAuto" int NOT NULL,
+  "IDCliente" int NOT NULL,
+  "IDEmpleado" int NOT NULL,
+  "IDServicio" int NOT NULL,
+  "FechaHojalateriaPintura" date NOT NULL,
+  FOREIGN KEY ("IDAuto") REFERENCES "Autos"("IDAuto") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDCliente") REFERENCES "Clientes"("IDCliente") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDEmpleado") REFERENCES "Empleados"("IDEmpleado") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDServicio") REFERENCES "Servicios"("IDServicio") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE "SegurosAuto" (
   "IDSeguro" serial PRIMARY KEY,
-  "IDAuto" int,
-  "IDCliente" int,
-  "TipoSeguro" varchar(50),
-  "Cobertura" text,
-  "Precio" decimal(10,2)
+  "IDAuto" int NOT NULL,
+  "IDCliente" int NOT NULL,
+  "TipoSeguro" varchar(50) NOT NULL,
+  "Cobertura" text NOT NULL,
+  "Precio" decimal(10,2) NOT NULL CHECK("Precio" >= 0.0),
+  FOREIGN KEY ("IDAuto") REFERENCES "Autos"("IDAuto") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("IDCliente") REFERENCES "Clientes"("IDCliente") ON DELETE CASCADE ON UPDATE CASCADE
 );
     \end{lstlisting}
 
@@ -212,352 +223,404 @@ CREATE TABLE "SegurosAuto" (
     \begin{lstlisting}[language=SQL]
 -- Script de Insercion de Datos para las tablas 
 -- Insercion de Datos para la Tabla Clientes
-INSERT INTO Clientes (Nombre, Direccion, Telefono) VALUES
-('Juan Perez', 'Calle 123, Ciudad A', '555-1234'),
-('Maria Rodriguez', 'Avenida XYZ, Ciudad B', '555-5678'),
-('Carlos Martinez', 'Calle 456, Ciudad C', '555-9876'),
-('Laura Lopez', 'Avenida LMN, Ciudad A', '555-5432'),
-('Pedro Sanchez', 'Calle 789, Ciudad B', '555-8765'),
-('Ana Gutierrez', 'Avenida PQR, Ciudad C', '555-2345'),
-('Javier Hernandez', 'Calle 012, Ciudad A', '555-6789'),
-('Sofia Ramirez', 'Avenida DEF, Ciudad B', '555-3456'),
-('Alejandro Torres', 'Calle 345, Ciudad C', '555-8765'),
-('Isabel Castro', 'Avenida UVW, Ciudad A', '555-2345'),
-('Luis Morales', 'Calle 678, Ciudad B', '555-7890'),
-('Elena Navarro', 'Avenida GHI, Ciudad C', '555-4567'),
-('Raul Jimenez', 'Calle 901, Ciudad A', '555-0987'),
-('Carmen Ortega', 'Avenida JKL, Ciudad B', '555-6543'),
-('Ricardo Vargas', 'Calle 234, Ciudad C', '555-5678'),
-('Patricia Diaz', 'Avenida STU, Ciudad A', '555-4321'),
-('Daniel Mendoza', 'Calle 567, Ciudad B', '555-8765'),
-('Monica Silva', 'Avenida NOP, Ciudad C', '555-3210'),
-('Roberto Cruz', 'Calle 890, Ciudad A', '555-7654'),
-('Martha Flores', 'Avenida ABC, Ciudad B', '555-2109'),
-('Gabriel Vega', 'Calle 123, Ciudad C', '555-6543'),
-('Veronica Herrera', 'Avenida XYZ, Ciudad A', '555-0987'),
-('Hector Nunez', 'Calle 456, Ciudad B', '555-5432'),
-('Silvia Torres', 'Avenida LMN, Ciudad C', '555-8765'),
-('Juan Ramirez', 'Calle 123, Ciudad B', '123-456-7890'),
-('Maria Rodriguez', 'Avenida YZ, Ciudad H', '977-654-3210'),
-('Carlos Lopez', 'Carrera 456, Ciudad C', '456-789-0123'),
-('Ana Martinez', 'Avenida ABC, Ciudad A', '789-012-3456'),
-('Pedro Sanchez', 'Calle 789, Ciudad B', '012-345-6789'),
-('Laura Gonzalez', 'Carrera 789, Ciudad C', '345-678-9012'),
-('Roberto Jimenez', 'Calle 456, Ciudad A', '678-901-2345'),
-('Sofia Torres', 'Avenida XYZ, Ciudad B', '901-234-5678'),
-('Miguel Ruiz', 'Carrera 123, Ciudad C', '234-567-8901'),
-('Carmen Herrera', 'Avenida ABC, Ciudad A', '567-890-1234'),
-('Diego Flores', 'Calle 789, Ciudad B', '890-123-4567'),
-('Isabel Castro', 'Carrera 456, Ciudad C', '123-234-5678'),
-('Javier Nunez', 'Avenida XYZ, Ciudad A', '234-345-6789'),
-('Adriana Vega', 'Calle 123, Ciudad B', '345-456-7890'),
-('Hector Mendoza', 'Carrera 789, Ciudad C', '456-567-8901'),
-('Luisa Ramos', 'Avenida ABC, Ciudad A', '567-678-9012'),
-('Oscar Diaz', 'Calle 456, Ciudad B', '678-789-0123'),
-('Raquel Silva', 'Avenida XYZ, Ciudad C', '789-890-1234'),
-('Fernando Ortiz', 'Carrera 123, Ciudad A', '890-901-2345'),
-('Natalia Vargas', 'Calle 789, Ciudad B', '901-012-3456'),
-('Eduardo Guzman', 'Avenida ABC, Ciudad C', '012-123-2345'),
-('Gabriela Paredes', 'Carrera 456, Ciudad A', '123-234-3456'),
-('Alberto Navarro', 'Avenida XYZ, Ciudad B', '234-345-4567'),
-('Marta Jimenez', 'Calle 123, Ciudad C', '345-456-5678'),
-('Juan Martinez', 'Calle C #123', '555-1334'),
-('Maria Garcia', 'Avenida B #456', '555-5678'),
-('Carlos Lopez', 'Calle C #789', '555-9876'),
-('Ana Rodriguez', 'Avenida D #1011', '555-1112'),
-('Miguel Sanchez', 'Calle E #1314', '555-1314'),
-('Laura Martinez', 'Avenida F #1516', '555-1516'),
-('Javier Torres', 'Calle G #1718', '555-1718'),
-('Rosa Ramirez', 'Avenida H #1920', '555-1920'),
-('Pedro Gomez', 'Calle I #2122', '555-2122'),
-('Carmen Vargas', 'Avenida J #2324', '555-2324'),
-('Roberto Castro', 'Calle K #2526', '555-2526'),
-('Sofia Jimenez', 'Avenida L #2728', '555-2728'),
-('Fernando Reyes', 'Calle M #2930', '555-2930'),
-('Isabel Herrera', 'Avenida N #3132', '555-3132'),
-('Alejandro Medina', 'Calle O #3334', '555-3334'),
-('Patricia Torres', 'Avenida P #3536', '555-3536'),
-('Luis Soto', 'Calle Q #3738', '555-3738'),
-('Elena Navarro', 'Avenida R #3940', '555-3940'),
-('Hector Mendoza', 'Calle S #4142', '555-4142'),
-('Marta Guzman', 'Avenida T #4344', '555-4344'),
-('Daniel Herrera', 'Calle U #4546', '555-4546'),
-('Beatriz Salazar', 'Avenida V #4748', '555-4748'),
-('Ricardo Marquez', 'Calle W #4950', '555-4950'),
-('Susana Vidal', 'Avenida X #5152', '555-5152'),
-('Jorge Ramos', 'Calle Y #5354', '555-5354'),
-('Juan Perez', 'Calle H #13', '555-1244'),
-('Maria Rodriguez', 'Avenida B #456', '555-5678'),
-('Pedro Gomez', 'Calle C #789', '555-9012'),
-('Laura Martinez', 'Avenida D #1011', '555-3456'),
-('Carlos Sanchez', 'Calle E #1213', '555-7890'),
-('Ana Lopez', 'Avenida F #1415', '555-2345'),
-('Javier Torres', 'Calle G #1617', '555-6789'),
-('Carmen Ramirez', 'Avenida H #1819', '555-0123'),
-('Roberto Herrera', 'Calle I #2021', '555-4567'),
-('Sofia Gonzalez', 'Avenida J #2223', '555-8901'),
-('Daniel Jimenez', 'Calle K #2425', '555-2345'),
-('Isabel Castro', 'Avenida L #2627', '555-6789'),
-('Miguel Diaz', 'Calle M #2829', '555-0123'),
-('Patricia Vargas', 'Avenida N #3031', '555-4567'),
-('Raul Flores', 'Calle O #3233', '555-8901'),
-('Elena Mendoza', 'Avenida P #3435', '555-2345'),
-('Luisa Vega', 'Calle Q #3637', '555-6789'),
-('Adrian Navarro', 'Avenida R #3839', '555-0123'),
-('Beatriz Ortega', 'Calle S #4041', '555-4567'),
-('Gabriel Ruiz', 'Avenida T #4243', '555-8901'),
-('Monica Salazar', 'Calle U #4445', '555-2345'),
-('Hector Nunez', 'Avenida V #4647', '555-6789'),
-('Silvia Paredes', 'Calle W #4849', '555-0123'),
-('Alejandro Medina', 'Avenida X #5051', '555-4567'),
-('Rosa Soto', 'Calle Y #5253', '555-8901');
-('Fernando Alvarez', 'Calle M #2930', '555-2930'),
-('Isabel Fernandez', 'Avenida N #3132', '555-3132'),
-
--- Insercion de Datos para la Tabla Autos
-INSERT INTO Autos (Modelo, Marca, AnioFabricacion, Precio) VALUES
-('Sedan', 'Toyota', 2020, 25000.00),
-('SUV', 'Honda', 2019, 28000.00),
-('Coupe', 'Ford', 2021, 32000.00),
-('Camioneta', 'Chevrolet', 2022, 35000.00),
-('Hatchback', 'Volkswagen', 2018, 20000.00);
-('Fusion', 'Ford', 2023, 27000.00),
-('Altima', 'Nissan', 2022, 24000.00),
-('Cruze', 'Chevrolet', 2021, 21000.00),
-('Malibu', 'Chevrolet', 2023, 26000.00),
-('Sentra', 'Nissan', 2022, 23000.00),
-('Focus', 'Ford', 2021, 20000.00),
-('Maxima', 'Nissan', 2023, 29000.00),
-('Mustang', 'Ford', 2022, 35000.00),
-('Corvette', 'Chevrolet', 2021, 70000.00),
-('Rav4', 'Toyota', 2023, 32000.00),
-('Camaro', 'Chevrolet', 2022, 40000.00),
-('Escape', 'Ford', 2021, 27000.00),
-('Pathfinder', 'Nissan', 2023, 31000.00),
-('CR-V', 'Honda', 2022, 30000.00),
-('Explorer', 'Ford', 2021, 34000.00),
-('Armada', 'Nissan', 2023, 38000.00),
-('Pilot', 'Honda', 2022, 33000.00),
-('Tacoma', 'Toyota', 2021, 32000.00),
-('Tundra', 'Toyota', 2023, 36000.00),
-('Frontier', 'Nissan', 2022, 29000.00),
-('Sedan', 'Toyota', 2022, 25000.00),
-('SUV', 'Honda', 2021, 30000.00),
-('Compacto', 'Ford', 2020, 20000.00),
-('Pickup', 'Chevrolet', 2022, 35000.00),
-('Coupe', 'BMW', 2021, 40000.00),
-('Familiar', 'Volkswagen', 2020, 28000.00),
-('Deportivo', 'Audi', 2022, 45000.00),
-('Hibrido', 'Lexus', 2021, 32000.00),
-('Crossover', 'Nissan', 2020, 27000.00),
-('Camioneta', 'Jeep', 2022, 38000.00),
-('Convertible', 'Mercedes-Benz', 2021, 50000.00),
-('Subcompacto', 'Hyundai', 2020, 22000.00),
-('Camion', 'Ram', 2022, 40000.00),
-('SUV Compacto', 'Mazda', 2021, 28000.00),
-('Minivan', 'Chrysler', 2020, 32000.00),
-('Coupe Deportivo', 'Porsche', 2022, 55000.00),
-('Auto Electrico', 'Tesla', 2021, 60000.00),
-('SUV de Lujo', 'Jaguar', 2020, 70000.00),
-('Roadster', 'Ferrari', 2022, 80000.00),
-('Berlina', 'Volvo', 2021, 35000.00),
-('Microcoche', 'Smart', 2020, 18000.00),
-('Monovolumen', 'Kia', 2022, 30000.00),
-('Hatchback', 'Subaru', 2021, 24000.00),
-('Compacto Deportivo', 'Alfa Romeo', 2020, 38000.00),
-('Coupe de Lujo', 'Lamborghini', 2022, 90000.00),
-('Sedan', 'Toyota', 2022, 25000.00),
-('Hatchback', 'Volkswagen', 2021, 20000.00),
-('SUV', 'Honda', 2023, 30000.00),
-('Pickup', 'Ford', 2020, 35000.00),
-('Coupe', 'Chevrolet', 2022, 28000.00),
-('Convertible', 'Mazda', 2021, 32000.00),
-('Sedan', 'Hyundai', 2023, 26000.00),
-('Hatchback', 'Kia', 2020, 23000.00),
-('SUV', 'Nissan', 2022, 27000.00),
-('Pickup', 'Ram', 2021, 33000.00),
-('Coupe', 'BMW', 2020, 40000.00),
-('Convertible', 'Audi', 2023, 38000.00),
-('Sedan', 'Mercedes-Benz', 2021, 35000.00),
-('Hatchback', 'Ford', 2022, 24000.00),
-('SUV', 'Jeep', 2020, 32000.00),
-('Pickup', 'Chevrolet', 2023, 37000.00),
-('Coupe', 'Lexus', 2021, 29000.00),
-('Convertible', 'Tesla', 2022, 45000.00),
-('Sedan', 'Subaru', 2023, 26000.00),
-('Hatchback', 'Volvo', 2020, 22000.00),
-('SUV', 'Mitsubishi', 2021, 28000.00),
-('Pickup', 'GMC', 2022, 36000.00),
-('Coupe', 'Jaguar', 2020, 42000.00),
-('Convertible', 'Porsche', 2023, 50000.00),
-('Sedan', 'Acura', 2021, 31000.00);
-('Sedan A1', 'Audi', 2022, 35000.00),
-('Civic', 'Honda', 2021, 28000.00),
-('Camry', 'Toyota', 2022, 32000.00),
-('Accord', 'Honda', 2020, 30000.00),
-('Mustang', 'Ford', 2021, 42000.00),
-('Corolla', 'Toyota', 2023, 27000.00),
-('C-Class', 'Mercedes-Benz', 2022, 50000.00),
-('Rogue', 'Nissan', 2021, 32000.00),
-('X5', 'BMW', 2023, 60000.00),
-('Wrangler', 'Jeep', 2022, 35000.00),
-('F-150', 'Ford', 2022, 38000.00),
-('3 Series', 'BMW', 2021, 42000.00),
-('Camaro', 'Chevrolet', 2023, 45000.00),
-('Mazda3', 'Mazda', 2022, 26000.00),
-('Pilot', 'Honda', 2020, 34000.00),
-('Q5', 'Audi', 2023, 48000.00),
-('Highlander', 'Toyota', 2021, 36000.00),
-('Escalade', 'Cadillac', 2022, 75000.00),
-('Grand Cherokee', 'Jeep', 2023, 42000.00),
-('GLC', 'Mercedes-Benz', 2021, 52000.00),
-('Civic Type R', 'Honda', 2022, 38000.00),
-('Charger', 'Dodge', 2021, 41000.00),
-('Malibu', 'Chevrolet', 2023, 29000.00),
-('Mazda CX-5', 'Mazda', 2022, 31000.00),
-('Atlas', 'Volkswagen', 2021, 36000.00);
+INSERT INTO "Clientes" VALUES (1, 'Juan Perez', 'Calle 123, Ciudad A', '555-1234');
+INSERT INTO "Clientes" VALUES (2, 'Maria Rodriguez', 'Avenida XYZ, Ciudad B', '555-5678');
+INSERT INTO "Clientes" VALUES (3, 'Carlos Martinez', 'Calle 456, Ciudad C', '555-9876');
+INSERT INTO "Clientes" VALUES (4,'Laura Lopez', 'Avenida LMN, Ciudad A', '555-5432');
+INSERT INTO "Clientes" VALUES (5, 'Pedro Sanchez', 'Calle 789, Ciudad B', '555-8765');
+INSERT INTO "Clientes" VALUES (6, 'Ana Gutierrez', 'Avenida PQR, Ciudad C', '555-2345');
+INSERT INTO "Clientes" VALUES (7, 'Javier Hernandez', 'Calle 012, Ciudad A', '555-6789');
+INSERT INTO "Clientes" VALUES (8, 'Sofia Ramirez', 'Avenida DEF, Ciudad B', '555-3456');
+INSERT INTO "Clientes" VALUES (9, 'Alejandro Torres', 'Calle 345, Ciudad C', '555-8765');
+INSERT INTO "Clientes" VALUES (10, 'Isabel Castro', 'Avenida UVW, Ciudad A', '555-2345');
+INSERT INTO "Clientes" VALUES (11, 'Luis Morales', 'Calle 678, Ciudad B', '555-7890');
+INSERT INTO "Clientes" VALUES (12, 'Elena Navarro', 'Avenida GHI, Ciudad C', '555-4567');
+INSERT INTO "Clientes" VALUES (13, 'Raul Jimenez', 'Calle 901, Ciudad A', '555-0987');
+INSERT INTO "Clientes" VALUES (14, 'Carmen Ortega', 'Avenida JKL, Ciudad B', '555-6543');
+INSERT INTO "Clientes" VALUES (15, 'Ricardo Vargas', 'Calle 234, Ciudad C', '555-5678');
+INSERT INTO "Clientes" VALUES (16, 'Patricia Diaz', 'Avenida STU, Ciudad A', '555-4321');
+INSERT INTO "Clientes" VALUES (17, 'Daniel Mendoza', 'Calle 567, Ciudad B', '555-8765');
+INSERT INTO "Clientes" VALUES (18, 'Monica Silva', 'Avenida NOP, Ciudad C', '555-3210');
+INSERT INTO "Clientes" VALUES (19, 'Roberto Cruz', 'Calle 890, Ciudad A', '555-7654');
+INSERT INTO "Clientes" VALUES (20, 'Martha Flores', 'Avenida ABC, Ciudad B', '555-2109');
+INSERT INTO "Clientes" VALUES (21, 'Gabriel Vega', 'Calle 123, Ciudad C', '555-6543');
+INSERT INTO "Clientes" VALUES (22, 'Veronica Herrera', 'Avenida XYZ, Ciudad A', '555-0987');
+INSERT INTO "Clientes" VALUES (23, 'Hector Nunez', 'Calle 456, Ciudad B', '555-5432');
+INSERT INTO "Clientes" VALUES (24, 'Silvia Torres', 'Avenida LMN, Ciudad C', '555-8765');
+INSERT INTO "Clientes" VALUES (25, 'Juan Ramirez', 'Calle 123, Ciudad B', '123-456-7890');
+INSERT INTO "Clientes" VALUES (26, 'Maria Rodriguez', 'Avenida YZ, Ciudad H', '977-654-3210');
+INSERT INTO "Clientes" VALUES (27, 'Carlos Lopez', 'Carrera 456, Ciudad C', '456-789-0123');
+INSERT INTO "Clientes" VALUES (28, 'Ana Martinez', 'Avenida ABC, Ciudad A', '789-012-3456');
+INSERT INTO "Clientes" VALUES (29, 'Pedro Sanchez', 'Calle 789, Ciudad B', '012-345-6789');
+INSERT INTO "Clientes" VALUES (30, 'Sofia Gutierrez', 'Avenida PQR, Ciudad C', '345-678-9012');
+INSERT INTO "Clientes" VALUES (31, 'Javier Hernandez', 'Calle 012, Ciudad A', '678-901-2345');
+INSERT INTO "Clientes" VALUES (32, 'Luisa Morales', 'Avenida GHI, Ciudad B', '901-234-5678');
+INSERT INTO "Clientes" VALUES (33, 'Carlos Soto', 'Calle 345, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (34, 'Isabel Castro', 'Avenida UVW, Ciudad A', '567-890-1234');
+INSERT INTO "Clientes" VALUES (35, 'Raul Jimenez', 'Calle 678, Ciudad B', '890-123-4567');
+INSERT INTO "Clientes" VALUES (36, 'Carmen Ortega', 'Avenida JKL, Ciudad C', '123-456-7890');
+INSERT INTO "Clientes" VALUES (37, 'Ricardo Vargas', 'Calle 234, Ciudad A', '456-789-0123');
+INSERT INTO "Clientes" VALUES (38, 'Patricia Diaz', 'Avenida STU, Ciudad B', '789-012-3456');
+INSERT INTO "Clientes" VALUES (39, 'Daniel Mendoza', 'Calle 567, Ciudad C', '012-345-6789');
+INSERT INTO "Clientes" VALUES (40, 'Monica Silva', 'Avenida NOP, Ciudad A', '345-678-9012');
+INSERT INTO "Clientes" VALUES (41, 'Roberto Cruz', 'Calle 890, Ciudad B', '678-901-2345');
+INSERT INTO "Clientes" VALUES (42, 'Martha Flores', 'Avenida ABC, Ciudad C', '901-234-5678');
+INSERT INTO "Clientes" VALUES (43, 'Gabriel Vega', 'Calle 123, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (44, 'Veronica Herrera', 'Avenida XYZ, Ciudad A', '567-890-1234');
+INSERT INTO "Clientes" VALUES (45, 'Hector Nunez', 'Calle 456, Ciudad B', '890-123-4567');
+INSERT INTO "Clientes" VALUES (46, 'Silvia Torres', 'Avenida LMN, Ciudad C', '123-456-7890');
+INSERT INTO "Clientes" VALUES (47, 'Juan Ramirez', 'Calle 123, Ciudad B', '123-987-6543');
+INSERT INTO "Clientes" VALUES (48, 'Maria Rodriguez', 'Avenida YZ, Ciudad H', '977-654-3210');
+INSERT INTO "Clientes" VALUES (49, 'Carlos Lopez', 'Carrera 456, Ciudad C', '456-789-0123');
+INSERT INTO "Clientes" VALUES (50, 'Ana Martinez', 'Avenida ABC, Ciudad A', '789-012-3456');
+INSERT INTO "Clientes" VALUES (51, 'Pedro Sanchez', 'Calle 789, Ciudad B', '012-345-6789');
+INSERT INTO "Clientes" VALUES (52, 'Sofia Gutierrez', 'Avenida PQR, Ciudad C', '345-678-9012');
+INSERT INTO "Clientes" VALUES (53, 'Javier Hernandez', 'Calle 012, Ciudad A', '678-901-2345');
+INSERT INTO "Clientes" VALUES (54, 'Luisa Morales', 'Avenida GHI, Ciudad B', '901-234-5678');
+INSERT INTO "Clientes" VALUES (55, 'Carlos Soto', 'Calle 345, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (56, 'Isabel Castro', 'Avenida UVW, Ciudad A', '567-890-1234');
+INSERT INTO "Clientes" VALUES (57, 'Raul Jimenez', 'Calle 678, Ciudad B', '890-123-4567');
+INSERT INTO "Clientes" VALUES (58, 'Carmen Ortega', 'Avenida JKL, Ciudad C', '123-456-7890');
+INSERT INTO "Clientes" VALUES (59, 'Ricardo Vargas', 'Calle 234, Ciudad A', '456-789-0123');
+INSERT INTO "Clientes" VALUES (60, 'Patricia Diaz', 'Avenida STU, Ciudad B', '789-012-3456');
+INSERT INTO "Clientes" VALUES (61, 'Daniel Mendoza', 'Calle 567, Ciudad C', '012-345-6789');
+INSERT INTO "Clientes" VALUES (62, 'Monica Silva', 'Avenida NOP, Ciudad A', '345-678-9012');
+INSERT INTO "Clientes" VALUES (63, 'Roberto Cruz', 'Calle 890, Ciudad B', '678-901-2345');
+INSERT INTO "Clientes" VALUES (64, 'Martha Flores', 'Avenida ABC, Ciudad C', '901-234-5678');
+INSERT INTO "Clientes" VALUES (65, 'Gabriel Vega', 'Calle 123, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (66, 'Veronica Herrera', 'Avenida XYZ, Ciudad A', '567-890-1234');
+INSERT INTO "Clientes" VALUES (67, 'Hector Nunez', 'Calle 456, Ciudad B', '890-123-4567');
+INSERT INTO "Clientes" VALUES (68, 'Silvia Torres', 'Avenida LMN, Ciudad C', '123-456-7890');
+INSERT INTO "Clientes" VALUES (69, 'Juan Ramirez', 'Calle 123, Ciudad B', '123-987-6543');
+INSERT INTO "Clientes" VALUES (70, 'Maria Rodriguez', 'Avenida YZ, Ciudad H', '977-654-3210');
+INSERT INTO "Clientes" VALUES (71, 'Carlos Lopez', 'Carrera 456, Ciudad C', '456-789-0123');
+INSERT INTO "Clientes" VALUES (72, 'Ana Martinez', 'Avenida ABC, Ciudad A', '789-012-3456');
+INSERT INTO "Clientes" VALUES (73, 'Pedro Sanchez', 'Calle 789, Ciudad B', '012-345-6789');
+INSERT INTO "Clientes" VALUES (74, 'Sofia Gutierrez', 'Avenida PQR, Ciudad C', '345-678-9012');
+INSERT INTO "Clientes" VALUES (75, 'Javier Hernandez', 'Calle 012, Ciudad A', '678-901-2345');
+INSERT INTO "Clientes" VALUES (76, 'Luisa Morales', 'Avenida GHI, Ciudad B', '901-234-5678');
+INSERT INTO "Clientes" VALUES (77, 'Carlos Soto', 'Calle 345, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (78, 'Isabel Castro', 'Avenida UVW, Ciudad A', '567-890-1234');
+INSERT INTO "Clientes" VALUES (79, 'Raul Jimenez', 'Calle 678, Ciudad B', '890-123-4567');
+INSERT INTO "Clientes" VALUES (80, 'Carmen Ortega', 'Avenida JKL, Ciudad C', '123-456-7890');
+INSERT INTO "Clientes" VALUES (81, 'Ricardo Vargas', 'Calle 234, Ciudad A', '456-789-0123');
+INSERT INTO "Clientes" VALUES (82, 'Patricia Diaz', 'Avenida STU, Ciudad B', '789-012-3456');
+INSERT INTO "Clientes" VALUES (83, 'Daniel Mendoza', 'Calle 567, Ciudad C', '012-345-6789');
+INSERT INTO "Clientes" VALUES (84, 'Monica Silva', 'Avenida NOP, Ciudad A', '345-678-9012');
+INSERT INTO "Clientes" VALUES (85, 'Roberto Cruz', 'Calle 890, Ciudad B', '678-901-2345');
+INSERT INTO "Clientes" VALUES (86, 'Martha Flores', 'Avenida ABC, Ciudad C', '901-234-5678');
+INSERT INTO "Clientes" VALUES (87, 'Gabriel Vega', 'Calle 123, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (88, 'Veronica Herrera', 'Avenida XYZ, Ciudad A', '567-890-1234');
+INSERT INTO "Clientes" VALUES (89, 'Hector Nunez', 'Calle 456, Ciudad B', '890-123-4567');
+INSERT INTO "Clientes" VALUES (90, 'Silvia Torres', 'Avenida LMN, Ciudad C', '123-456-7890');
+INSERT INTO "Clientes" VALUES (91, 'Juan Ramirez', 'Calle 123, Ciudad B', '123-987-6543');
+INSERT INTO "Clientes" VALUES (92, 'Maria Rodriguez', 'Avenida YZ, Ciudad H', '977-654-3210');
+INSERT INTO "Clientes" VALUES (93, 'Carlos Lopez', 'Carrera 456, Ciudad C', '456-789-0123');
+INSERT INTO "Clientes" VALUES (94, 'Ana Martinez', 'Avenida ABC, Ciudad A', '789-012-3456');
+INSERT INTO "Clientes" VALUES (95, 'Pedro Sanchez', 'Calle 789, Ciudad B', '012-345-6789');
+INSERT INTO "Clientes" VALUES (96, 'Sofia Gutierrez', 'Avenida PQR, Ciudad C', '345-678-9012');
+INSERT INTO "Clientes" VALUES (97, 'Javier Hernandez', 'Calle 012, Ciudad A', '678-901-2345');
+INSERT INTO "Clientes" VALUES (98, 'Luisa Morales', 'Avenida GHI, Ciudad B', '901-234-5678');
+INSERT INTO "Clientes" VALUES (99, 'Carlos Soto', 'Calle 345, Ciudad C', '234-567-8901');
+INSERT INTO "Clientes" VALUES (100, 'Isabel Castro', 'Avenida UVW, Ciudad A', '567-890-1234');
+ 
+--Insercion de Datos para la Tabla Autos
+INSERT INTO "Autos" VALUES (101, 'Coupe', 'Ford', 2021, 32000.00);
+INSERT INTO "Autos" VALUES (102, 'Fusion', 'Ford', 2023, 27000.00);
+INSERT INTO "Autos" VALUES (103, 'Focus', 'Ford', 2021, 20000.00);
+INSERT INTO "Autos" VALUES (104, 'Mustang', 'Ford', 2022, 35000.00);
+INSERT INTO "Autos" VALUES (105, 'Escape', 'Ford', 2021, 27000.00);
+INSERT INTO "Autos" VALUES (106, 'Explorer', 'Ford', 2021, 34000.00);
+INSERT INTO "Autos" VALUES (107, 'Compacto', 'Ford', 2020, 20000.00);
+INSERT INTO "Autos" VALUES (108, 'Pickup', 'Ford', 2020, 35000.00);
+INSERT INTO "Autos" VALUES (109, 'Hatchback', 'Ford', 2022, 24000.00);
+INSERT INTO "Autos" VALUES (110, 'Mustang', 'Ford', 2021, 42000.00);
+INSERT INTO "Autos" VALUES (111, 'F-150', 'Ford', 2022, 38000.00);
+INSERT INTO "Autos" VALUES (112, 'Edge', 'Ford', 2023, 31000.00);
+INSERT INTO "Autos" VALUES (113, 'Ranger', 'Ford', 2022, 29000.00);
+INSERT INTO "Autos" VALUES (114, 'Expedition', 'Ford', 2021, 45000.00);
+INSERT INTO "Autos" VALUES (115, 'Bronco', 'Ford', 2023, 37000.00);
+INSERT INTO "Autos" VALUES (116, 'Maverick', 'Ford', 2022, 25000.00);
+INSERT INTO "Autos" VALUES (117, 'EcoSport', 'Ford', 2021, 23000.00);
+INSERT INTO "Autos" VALUES (118, 'Taurus', 'Ford', 2022, 28000.00);
+INSERT INTO "Autos" VALUES (119, 'Flex', 'Ford', 2023, 32000.00);
+INSERT INTO "Autos" VALUES (120, 'Transit', 'Ford', 2021, 36000.00);
+INSERT INTO "Autos" VALUES (121, 'Fiesta', 'Ford', 2022, 20000.00);
+INSERT INTO "Autos" VALUES (122, 'Edge ST', 'Ford', 2023, 35000.00);
+INSERT INTO "Autos" VALUES (123, 'Escape Hybrid', 'Ford', 2022, 29000.00);
+INSERT INTO "Autos" VALUES (124, 'Fusion Hybrid', 'Ford', 2021, 27000.00);
+INSERT INTO "Autos" VALUES (125, 'Mustang Mach-E', 'Ford', 2023, 40000.00);
+INSERT INTO "Autos" VALUES (126, 'Expedition Max', 'Ford', 2022, 48000.00);
+INSERT INTO "Autos" VALUES (127, 'F-250', 'Ford', 2021, 42000.00);
+INSERT INTO "Autos" VALUES (128, 'Transit Connect', 'Ford', 2023, 26000.00);
+INSERT INTO "Autos" VALUES (129, 'Ranger Raptor', 'Ford', 2022, 34000.00);
+INSERT INTO "Autos" VALUES (130, 'Mustang Shelby GT500', 'Ford', 2021, 65000.00);
+INSERT INTO "Autos" VALUES (131, 'Fusion Sport', 'Ford', 2023, 33000.00);
+INSERT INTO "Autos" VALUES (132, 'Escape ST', 'Ford', 2022, 32000.00);
+INSERT INTO "Autos" VALUES (133, 'Bronco Sport', 'Ford', 2021, 26000.00);
+INSERT INTO "Autos" VALUES (134, 'Flex Limited', 'Ford', 2023, 37000.00);
+INSERT INTO "Autos" VALUES (135, 'Mustang GT', 'Ford', 2022, 43000.00);
+INSERT INTO "Autos" VALUES (136, 'F-350', 'Ford', 2021, 55000.00);
+INSERT INTO "Autos" VALUES (137, 'Edge SEL', 'Ford', 2023, 30000.00);
+INSERT INTO "Autos" VALUES (138, 'Escape SE', 'Ford', 2022, 28000.00);
+INSERT INTO "Autos" VALUES (139, 'Ranger XL', 'Ford', 2021, 26000.00);
+INSERT INTO "Autos" VALUES (140, 'Expedition Platinum', 'Ford', 2022, 50000.00);
+INSERT INTO "Autos" VALUES (141, 'Maverick XL', 'Ford', 2023, 24000.00);
+INSERT INTO "Autos" VALUES (142, 'EcoSport SES', 'Ford', 2021, 29000.00);
+INSERT INTO "Autos" VALUES (143, 'Taurus SHO', 'Ford', 2022, 32000.00);
+INSERT INTO "Autos" VALUES (144, 'F-150 Platinum', 'Ford', 2023, 42000.00);
+INSERT INTO "Autos" VALUES (145, 'Edge Titanium', 'Ford', 2021, 35000.00);
+INSERT INTO "Autos" VALUES (146, 'Escape Titanium', 'Ford', 2022, 34000.00);
+INSERT INTO "Autos" VALUES (147, 'Fusion Energi', 'Ford', 2023, 29000.00);
+INSERT INTO "Autos" VALUES (148, 'Mustang Convertible', 'Ford', 2021, 47000.00);
+INSERT INTO "Autos" VALUES (149, 'Transit Passenger', 'Ford', 2022, 38000.00);
+INSERT INTO "Autos" VALUES (150, 'F-450', 'Ford', 2023, 60000.00);
+INSERT INTO "Autos" VALUES (151, 'Explorer Limited', 'Ford', 2022, 43000.00);
+INSERT INTO "Autos" VALUES (152, 'Bronco Big Bend', 'Ford', 2023, 33000.00);
+INSERT INTO "Autos" VALUES (153, 'Maverick XLT', 'Ford', 2021, 27000.00);
+INSERT INTO "Autos" VALUES (154, 'EcoSport Titanium', 'Ford', 2022, 31000.00);
+INSERT INTO "Autos" VALUES (155, 'Fusion SE', 'Ford', 2023, 25000.00);
+INSERT INTO "Autos" VALUES (156, 'Edge SE', 'Ford', 2021, 28000.00);
+INSERT INTO "Autos" VALUES (157, 'Escape S', 'Ford', 2022, 26000.00);
+INSERT INTO "Autos" VALUES (158, 'Ranger Lariat', 'Ford', 2023, 36000.00);
+INSERT INTO "Autos" VALUES (159, 'Expedition XLT', 'Ford', 2021, 41000.00);
+INSERT INTO "Autos" VALUES (160, 'Mustang Mach 1', 'Ford', 2022, 45000.00);
+INSERT INTO "Autos" VALUES (161, 'F-350 King Ranch', 'Ford', 2023, 58000.00);
+INSERT INTO "Autos" VALUES (162, 'Edge ST-Line', 'Ford', 2021, 33000.00);
+INSERT INTO "Autos" VALUES (163, 'Escape SEL', 'Ford', 2022, 30000.00);
+INSERT INTO "Autos" VALUES (164, 'Ranger XLT', 'Ford', 2023, 31000.00);
+INSERT INTO "Autos" VALUES (165, 'Bronco Badlands', 'Ford', 2021, 36000.00);
+INSERT INTO "Autos" VALUES (166, 'Flex SE', 'Ford', 2022, 32000.00);
+INSERT INTO "Autos" VALUES (167, 'Mustang EcoBoost', 'Ford', 2023, 38000.00);
+INSERT INTO "Autos" VALUES (168, 'F-450 Platinum', 'Ford', 2021, 62000.00);
+INSERT INTO "Autos" VALUES (169, 'Explorer XLT', 'Ford', 2022, 38000.00);
+INSERT INTO "Autos" VALUES (170, 'EcoSport SE', 'Ford', 2023, 27000.00);
+INSERT INTO "Autos" VALUES (171, 'Mustang Bullitt', 'Ford', 2021, 49000.00);
+INSERT INTO "Autos" VALUES (172, 'Transit Cargo', 'Ford', 2022, 33000.00);
+INSERT INTO "Autos" VALUES (173, 'F-250 Lariat', 'Ford', 2023, 46000.00);
+INSERT INTO "Autos" VALUES (174, 'Edge SEL Plus', 'Ford', 2021, 32000.00);
+INSERT INTO "Autos" VALUES (175, 'Escape SES', 'Ford', 2022, 29000.00);
+INSERT INTO "Autos" VALUES (176, 'Fusion Titanium', 'Ford', 2023, 27000.00);
+INSERT INTO "Autos" VALUES (177, 'Mustang Mach-E GT', 'Ford', 2021, 55000.00);
+INSERT INTO "Autos" VALUES (178, 'Expedition Limited', 'Ford', 2022, 48000.00);
+INSERT INTO "Autos" VALUES (179, 'Bronco Wildtrak', 'Ford', 2023, 39000.00);
+INSERT INTO "Autos" VALUES (180, 'Maverick Lariat', 'Ford', 2021, 28000.00);
+INSERT INTO "Autos" VALUES (181, 'EcoSport S', 'Ford', 2022, 25000.00);
+INSERT INTO "Autos" VALUES (182, 'Taurus Limited', 'Ford', 2023, 34000.00);
+INSERT INTO "Autos" VALUES (183, 'Flex SEL', 'Ford', 2021, 36000.00);
+INSERT INTO "Autos" VALUES (184, 'F-150 Raptor', 'Ford', 2022, 55000.00);
+INSERT INTO "Autos" VALUES (185, 'Edge ST-Line', 'Ford', 2023, 33000.00);
+INSERT INTO "Autos" VALUES (186, 'Escape Titanium Hybrid', 'Ford', 2021, 32000.00);
+INSERT INTO "Autos" VALUES (187, 'Fusion Hybrid SE', 'Ford', 2022, 28000.00);
+INSERT INTO "Autos" VALUES (188, 'Mustang GT Convertible', 'Ford', 2023, 49000.00);
+INSERT INTO "Autos" VALUES (189, 'Transit Connect XL', 'Ford', 2021, 26000.00);
+INSERT INTO "Autos" VALUES (190, 'F-450 King Ranch', 'Ford', 2022, 60000.00);
+INSERT INTO "Autos" VALUES (191, 'Explorer Platinum', 'Ford', 2023, 48000.00);
+INSERT INTO "Autos" VALUES (192, 'Bronco Outer Banks', 'Ford', 2021, 36000.00);
+INSERT INTO "Autos" VALUES (193, 'Maverick XL Hybrid', 'Ford', 2022, 26000.00);
+INSERT INTO "Autos" VALUES (194, 'EcoSport SES', 'Ford', 2023, 30000.00);
+INSERT INTO "Autos" VALUES (195, 'Fusion Energi Titanium', 'Ford', 2021, 32000.00);
+INSERT INTO "Autos" VALUES (196, 'Edge Titanium Elite', 'Ford', 2022, 38000.00);
+INSERT INTO "Autos" VALUES (197, 'Escape ST-Line', 'Ford', 2023, 31000.00);
+INSERT INTO "Autos" VALUES (198, 'Ranger XLT Sport', 'Ford', 2021, 29000.00);
+INSERT INTO "Autos" VALUES (199, 'Expedition Max Platinum', 'Ford', 2022, 52000.00);
+INSERT INTO "Autos" VALUES (200, 'Mustang Shelby GT350', 'Ford', 2023, 62000.00);
 
 -- Insercion de Datos para la Tabla Empleados
-INSERT INTO Empleados (Nombre, Direccion, Telefono, Rol) VALUES
-('Laura Sanchez', 'Calle 456, Ciudad C', '555-1111', 'Asesor'),
-('Hector Nunez', 'Calle 753, Ciudad XYZ', '555-4545', 'Asesor'),
-('Javier Garcia', 'Avenida XYZ, Ciudad B', '555-2222', 'Mecanico'),
-('Lucia Vargas', 'Calle 135, Ciudad XYZ', '555-7777', 'Mecanico'),
-('Sofia Vargas', 'Carrera 789, Ciudad A', '555-3333', 'Promotor'),
-('Maria Gonzalez', 'Avenida ABC, Ciudad XYZ', '555-5678', 'Promotor'),
-('Raul Diaz', 'Calle 246, Ciudad XYZ', '555-6666', 'Promotor'),
-('Daniel Mendoza', 'Avenida K, Ciudad P', '888888888', 'Promotor'),
-('Daniel Ruiz', 'Calle 123, Ciudad A', '555-4444', 'Electromecanico'),
-('Elena Torres', 'Avenida LMN, Ciudad B', '555-5555', 'Gerente');
+INSERT INTO "Empleados" VALUES (1001, 'Laura Sanchez', 'Calle 456, Ciudad C', '555-1111', 'Asesor');
+INSERT INTO "Empleados" VALUES (1002, 'Hector Nunez', 'Calle 753, Ciudad XYZ', '555-4545', 'Asesor');
+INSERT INTO "Empleados" VALUES (1003, 'Javier Garcia', 'Avenida XYZ, Ciudad B', '555-2222', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1004, 'Lucia Vargas', 'Calle 135, Ciudad XYZ', '555-7777', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1005, 'Sofia Vargas', 'Carrera 789, Ciudad A', '555-3333', 'Promotor');
+INSERT INTO "Empleados" VALUES (1006, 'Maria Gonzalez', 'Avenida ABC, Ciudad XYZ', '555-5678', 'Promotor');
+INSERT INTO "Empleados" VALUES (1007, 'Raul Diaz', 'Calle 246, Ciudad XYZ', '555-6666', 'Promotor');
+INSERT INTO "Empleados" VALUES (1008, 'Daniel Mendoza', 'Avenida K, Ciudad P', '888888888', 'Promotor');
+INSERT INTO "Empleados" VALUES (1009, 'Daniel Ruiz', 'Calle 123, Ciudad A', '555-4444', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1010, 'Elena Torres', 'Avenida LMN, Ciudad B', '555-5555', 'Gerente');
+INSERT INTO "Empleados" VALUES (1011, 'Sara Martinez', 'Carrera 789, Ciudad XYZ', '555-9999', 'Asesor');
+INSERT INTO "Empleados" VALUES (1012, 'Alejandro Perez', 'Calle 111, Ciudad P', '888877777', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1013, 'Laura Rodriguez', 'Avenida STU, Ciudad XYZ', '555-0000', 'Promotor');
+INSERT INTO "Empleados" VALUES (1014, 'Carlos Gonzalez', 'Calle 456, Ciudad A', '555-1234', 'Promotor');
+INSERT INTO "Empleados" VALUES (1015, 'Ana Ramirez', 'Avenida DEF, Ciudad XYZ', '555-9876', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1016, 'Juan Torres', 'Calle 678, Ciudad XYZ', '555-1111', 'Gerente');
+INSERT INTO "Empleados" VALUES (1017, 'Luisa Soto', 'Avenida NOP, Ciudad A', '555-2222', 'Asesor');
+INSERT INTO "Empleados" VALUES (1018, 'Pedro Mendoza', 'Calle 321, Ciudad XYZ', '555-3333', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1019, 'Maria Ruiz', 'Carrera 987, Ciudad A', '555-4444', 'Promotor');
+INSERT INTO "Empleados" VALUES (1020, 'Carlos Garcia', 'Avenida UVW, Ciudad XYZ', '555-5555', 'Promotor');
+INSERT INTO "Empleados" VALUES (1021, 'Sofia Diaz', 'Calle 012, Ciudad XYZ', '555-6666', 'Promotor');
+INSERT INTO "Empleados" VALUES (1022, 'Gabriel Gonzalez', 'Avenida JKL, Ciudad P', '888888888', 'Promotor');
+INSERT INTO "Empleados" VALUES (1023, 'Veronica Navarro', 'Calle 456, Ciudad A', '555-7777', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1024, 'Raul Gutierrez', 'Avenida GHI, Ciudad XYZ', '555-8888', 'Gerente');
+INSERT INTO "Empleados" VALUES (1025, 'Laura Ramirez', 'Calle 789, Ciudad XYZ', '555-9999', 'Asesor');
+INSERT INTO "Empleados" VALUES (1026, 'Hector Mendoza', 'Avenida ABC, Ciudad A', '555-0000', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1027, 'Javier Vargas', 'Carrera 123, Ciudad XYZ', '555-1111', 'Promotor');
+INSERT INTO "Empleados" VALUES (1028, 'Lucia Torres', 'Calle 456, Ciudad XYZ', '555-2222', 'Promotor');
+INSERT INTO "Empleados" VALUES (1029, 'Sofia Ruiz', 'Avenida XYZ, Ciudad P', '888877777', 'Promotor');
+INSERT INTO "Empleados" VALUES (1030, 'Maria Gonzalez', 'Calle 135, Ciudad A', '555-3333', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1031, 'Raul Diaz', 'Calle 246, Ciudad XYZ', '555-4444', 'Gerente');
+INSERT INTO "Empleados" VALUES (1032, 'Daniel Mendoza', 'Avenida K, Ciudad A', '555-5555', 'Asesor');
+INSERT INTO "Empleados" VALUES (1033, 'Daniel Ruiz', 'Calle 123, Ciudad XYZ', '555-6666', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1034, 'Elena Torres', 'Avenida LMN, Ciudad XYZ', '555-7777', 'Promotor');
+INSERT INTO "Empleados" VALUES (1035, 'Sara Martinez', 'Carrera 789, Ciudad P', '888888888', 'Promotor');
+INSERT INTO "Empleados" VALUES (1036, 'Alejandro Perez', 'Calle 111, Ciudad XYZ', '555-0000', 'Promotor');
+INSERT INTO "Empleados" VALUES (1037, 'Laura Rodriguez', 'Avenida STU, Ciudad A', '555-1234', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1038, 'Carlos Gonzalez', 'Calle 456, Ciudad XYZ', '555-9876', 'Gerente');
+INSERT INTO "Empleados" VALUES (1039, 'Ana Ramirez', 'Avenida DEF, Ciudad XYZ', '555-2345', 'Asesor');
+INSERT INTO "Empleados" VALUES (1040, 'Juan Torres', 'Calle 678, Ciudad A', '555-3456', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1041, 'Luisa Soto', 'Avenida NOP, Ciudad XYZ', '555-4567', 'Promotor');
+INSERT INTO "Empleados" VALUES (1042, 'Pedro Mendoza', 'Calle 321, Ciudad A', '555-5678', 'Promotor');
+INSERT INTO "Empleados" VALUES (1043, 'Maria Ruiz', 'Carrera 987, Ciudad XYZ', '555-6789', 'Promotor');
+INSERT INTO "Empleados" VALUES (1044, 'Carlos Garcia', 'Avenida UVW, Ciudad P', '555-7890', 'Promotor');
+INSERT INTO "Empleados" VALUES (1045, 'Sofia Diaz', 'Calle 012, Ciudad XYZ', '555-8901', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1046, 'Gabriel Gonzalez', 'Avenida JKL, Ciudad A', '555-9012', 'Gerente');
+INSERT INTO "Empleados" VALUES (1047, 'Veronica Navarro', 'Calle 456, Ciudad XYZ', '555-0123', 'Asesor');
+INSERT INTO "Empleados" VALUES (1048, 'Raul Gutierrez', 'Avenida GHI, Ciudad XYZ', '555-1234', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1049, 'Laura Ramirez', 'Calle 789, Ciudad A', '555-2345', 'Promotor');
+INSERT INTO "Empleados" VALUES (1050, 'Hector Mendoza', 'Avenida ABC, Ciudad XYZ', '555-3456', 'Promotor');
+INSERT INTO "Empleados" VALUES (1051, 'Javier Vargas', 'Carrera 123, Ciudad A', '555-4567', 'Promotor');
+INSERT INTO "Empleados" VALUES (1052, 'Lucia Torres', 'Calle 456, Ciudad XYZ', '555-5678', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1053, 'Sofia Ruiz', 'Avenida XYZ, Ciudad XYZ', '555-6789', 'Gerente');
+INSERT INTO "Empleados" VALUES (1054, 'Maria Gonzalez', 'Calle 135, Ciudad A', '555-7890', 'Asesor');
+INSERT INTO "Empleados" VALUES (1055, 'Raul Diaz', 'Calle 246, Ciudad XYZ', '555-8901', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1056, 'Daniel Mendoza', 'Avenida K, Ciudad A', '555-9012', 'Promotor');
+INSERT INTO "Empleados" VALUES (1057, 'Daniel Ruiz', 'Calle 123, Ciudad XYZ', '555-0123', 'Promotor');
+INSERT INTO "Empleados" VALUES (1058, 'Elena Torres', 'Avenida LMN, Ciudad XYZ', '555-1234', 'Promotor');
+INSERT INTO "Empleados" VALUES (1059, 'Sara Martinez', 'Carrera 789, Ciudad P', '555-2345', 'Promotor');
+INSERT INTO "Empleados" VALUES (1060, 'Alejandro Perez', 'Calle 111, Ciudad XYZ', '555-3456', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1061, 'Laura Rodriguez', 'Avenida STU, Ciudad A', '555-4567', 'Gerente');
+INSERT INTO "Empleados" VALUES (1062, 'Carlos Gonzalez', 'Calle 456, Ciudad XYZ', '555-5678', 'Asesor');
+INSERT INTO "Empleados" VALUES (1063, 'Ana Ramirez', 'Avenida DEF, Ciudad XYZ', '555-6789', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1064, 'Juan Torres', 'Calle 678, Ciudad A', '555-7890', 'Promotor');
+INSERT INTO "Empleados" VALUES (1065, 'Luisa Soto', 'Avenida NOP, Ciudad XYZ', '555-8901', 'Promotor');
+INSERT INTO "Empleados" VALUES (1066, 'Pedro Mendoza', 'Calle 321, Ciudad A', '555-9012', 'Promotor');
+INSERT INTO "Empleados" VALUES (1067, 'Maria Ruiz', 'Carrera 987, Ciudad XYZ', '555-0123', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1068, 'Carlos Garcia', 'Avenida UVW, Ciudad P', '555-1234', 'Gerente');
+INSERT INTO "Empleados" VALUES (1069, 'Sofia Diaz', 'Calle 012, Ciudad XYZ', '555-2345', 'Asesor');
+INSERT INTO "Empleados" VALUES (1070, 'Gabriel Gonzalez', 'Avenida JKL, Ciudad A', '555-3456', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1071, 'Veronica Navarro', 'Calle 456, Ciudad XYZ', '555-4567', 'Promotor');
+INSERT INTO "Empleados" VALUES (1072, 'Raul Gutierrez', 'Avenida GHI, Ciudad XYZ', '555-5678', 'Promotor');
+INSERT INTO "Empleados" VALUES (1073, 'Laura Ramirez', 'Calle 789, Ciudad A', '555-6789', 'Promotor');
+INSERT INTO "Empleados" VALUES (1074, 'Hector Mendoza', 'Avenida ABC, Ciudad XYZ', '555-7890', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1075, 'Javier Vargas', 'Carrera 123, Ciudad A', '555-8901', 'Gerente');
+INSERT INTO "Empleados" VALUES (1076, 'Lucia Torres', 'Calle 456, Ciudad XYZ', '555-9012', 'Asesor');
+INSERT INTO "Empleados" VALUES (1077, 'Sofia Ruiz', 'Avenida XYZ, Ciudad XYZ', '555-0123', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1078, 'Maria Gonzalez', 'Calle 135, Ciudad A', '555-1234', 'Promotor');
+INSERT INTO "Empleados" VALUES (1079, 'Raul Diaz', 'Calle 246, Ciudad XYZ', '555-2345', 'Promotor');
+INSERT INTO "Empleados" VALUES (1080, 'Daniel Mendoza', 'Avenida K, Ciudad A', '555-3456', 'Promotor');
+INSERT INTO "Empleados" VALUES (1081, 'Daniel Ruiz', 'Calle 123, Ciudad XYZ', '555-4567', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1082, 'Elena Torres', 'Avenida LMN, Ciudad XYZ', '555-5678', 'Gerente');
+INSERT INTO "Empleados" VALUES (1083, 'Sara Martinez', 'Carrera 789, Ciudad P', '555-6789', 'Asesor');
+INSERT INTO "Empleados" VALUES (1084, 'Alejandro Perez', 'Calle 111, Ciudad XYZ', '555-7890', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1085, 'Laura Rodriguez', 'Avenida STU, Ciudad A', '555-8901', 'Promotor');
+INSERT INTO "Empleados" VALUES (1086, 'Carlos Gonzalez', 'Calle 456, Ciudad XYZ', '555-9012', 'Promotor');
+INSERT INTO "Empleados" VALUES (1087, 'Ana Ramirez', 'Avenida DEF, Ciudad XYZ', '555-0123', 'Promotor');
+INSERT INTO "Empleados" VALUES (1088, 'Juan Torres', 'Calle 678, Ciudad A', '555-1234', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1089, 'Luisa Soto', 'Avenida NOP, Ciudad XYZ', '555-2345', 'Gerente');
+INSERT INTO "Empleados" VALUES (1090, 'Pedro Mendoza', 'Calle 321, Ciudad A', '555-3456', 'Asesor');
+INSERT INTO "Empleados" VALUES (1091, 'Maria Ruiz', 'Carrera 987, Ciudad XYZ', '555-4567', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1092, 'Carlos Garcia', 'Avenida UVW, Ciudad P', '555-5678', 'Promotor');
+INSERT INTO "Empleados" VALUES (1093, 'Sofia Diaz', 'Calle 012, Ciudad XYZ', '555-6789', 'Promotor');
+INSERT INTO "Empleados" VALUES (1094, 'Gabriel Gonzalez', 'Avenida JKL, Ciudad A', '555-7890', 'Promotor');
+INSERT INTO "Empleados" VALUES (1095, 'Veronica Navarro', 'Calle 456, Ciudad XYZ', '555-8901', 'Electromecanico');
+INSERT INTO "Empleados" VALUES (1096, 'Raul Gutierrez', 'Avenida GHI, Ciudad XYZ', '555-9012', 'Gerente');
+INSERT INTO "Empleados" VALUES (1097, 'Laura Ramirez', 'Calle 789, Ciudad A', '555-0123', 'Asesor');
+INSERT INTO "Empleados" VALUES (1098, 'Hector Mendoza', 'Avenida ABC, Ciudad XYZ', '555-1234', 'Mecanico');
+INSERT INTO "Empleados" VALUES (1099, 'Javier Vargas', 'Carrera 123, Ciudad A', '555-2345', 'Promotor');
 
 -- Insercion de Datos para la Tabla Servicios
-INSERT INTO Servicios (NombreServicio, Descripcion, Precio) VALUES
-('Cambio de Aceite', 'Incluye cambio de aceite y filtro.', 50.00),
-('Revision de Frenos', 'Revision y ajuste de sistema de frenos.', 80.00),
-('Alineacion y Balanceo', 'Alineacion y balanceo de ruedas.', 60.00),
-('Cambio de Bateria', 'Sustitucion de bateria.', 100.00),
-('Diagnostico Electronico', 'Analisis electronico del sistema.', 120.00),
-('Cambio de Neumaticos', 'Cambio de neumaticos', 200.00),
-('Lavado y Encerado', 'Lavado exterior y encerado', 30.00),
-('Reparacion de Aire Acondicionado', 'Reparacion del sistema de aire acondicionado', 150.00),
-('Cambio de Correa de Distribucion', 'Reemplazo de correa de distribucion', 90.00),
-('Revision de Suspension', 'Inspeccion y mantenimiento de suspension', 75.00),
-('Cambio de Filtros', 'Cambio de filtros de aire y combustible', 40.00),
-('Recarga de Refrigerante', 'Recarga del sistema de refrigeracion', 60.00),
-('Inspeccion de Luces', 'Inspeccion y reemplazo de luces', 20.00),
-('Cambio de Pastillas de Freno', 'Reemplazo de pastillas de freno', 70.00),
-('Reparacion de Escape', 'Reparacion de sistema de escape', 80.00),
-('Cambio de Amortiguadores', 'Reemplazo de amortiguadores', 120.00),
-('Recarga de Aceite para Direccion', 'Recarga de aceite para direccion', 25.00),
-('Reparacion de Transmision', 'Reparacion de sistema de transmision', 180.00),
-('Cambio de Bujias', 'Reemplazo de bujias', 30.00),
-('Ajuste de Motor', 'Ajuste y mantenimiento del motor', 100.00),
-('Reparacion de Sistema de Direccion', 'Reparacion de problemas en el sistema de direccion', 99.99),
-('Reemplazo de Correa de Distribucion', 'Reemplazo de correa de distribucion y ajuste', 129.99),
-('Servicio de Inyeccion de Combustible', 'Mantenimiento y limpieza del sistema de inyeccion', 69.99),
-('Servicio de Frenos ABS', 'Mantenimiento y reparacion del sistema de frenos ABS', 109.99),
-('Diagnostico de Problemas', 'Analisis y diagnostico de problemas mecanicos', 49.99),
-('Inspeccion de Emisiones', 'Inspeccion de emisiones contaminantes', 50.00),
-('Recarga de Aire Acondicionado', 'Recarga de gas refrigerante y revision del sistema de aire acondicionado', 69.99),
-('Cambio de Termostato', 'Reemplazo de termostato', 45.00),
-('Inspeccion de Neumaticos', 'Revision del estado y presion de los neumaticos', 30.00),
-('Reparacion de Sistema Electrico', 'Reparacion de problemas electricos', 120.00),
-('Servicio de Transmision', 'Revision y mantenimiento de la transmision', 159.99),
-('Cambio de Sensor de Oxigeno', 'Reemplazo de sensor de oxigeno', 60.00),
-('Servicio de Limpieza de Inyectores', 'Limpieza y mantenimiento de inyectores', 80.00);
+INSERT INTO "Servicios" VALUES (2001, 'Cambio de Aceite', 'Incluye cambio de aceite y filtro.', 50.00);
+INSERT INTO "Servicios" VALUES (2002, 'Alineacion y Balanceo', 'Alineacion y balanceo de las ruedas delanteras.', 80.00);
+INSERT INTO "Servicios" VALUES (2003, 'Frenos', 'Revision y cambio de pastillas de freno.', 120.00);
+INSERT INTO "Servicios" VALUES (2004, 'Cambio de Bateria', 'Instalacion de una nueva bateria.', 100.00);
+INSERT INTO "Servicios" VALUES (2005, 'Reparacion de Aire Acondicionado', 'Reparacion y recarga de sistema de aire acondicionado.', 150.00);
+INSERT INTO "Servicios" VALUES (2006, 'Cambio de Llantas', 'Cambio de llantas y balanceo.', 200.00);
+INSERT INTO "Servicios" VALUES (2007, 'Inspeccion General', 'Revision completa del vehiculo.', 90.00);
+INSERT INTO "Servicios" VALUES (2008, 'Cambio de Filtro de Aire', 'Cambio de filtro de aire del motor.', 30.00);
+INSERT INTO "Servicios" VALUES (2009, 'Lavado y Encerado', 'Lavado exterior y encerado de la carroceria.', 40.00);
+INSERT INTO "Servicios" VALUES (2010, 'Diagnostico de Motor', 'Diagnostico computarizado del sistema de motor.', 60.00);
 
 -- Insercion de Datos para la Tabla Mantenimientos
-INSERT INTO Mantenimientos (IDAuto, IDCliente, IDEmpleado, IDServicio, FechaMantenimiento) VALUES
-(1, 1, 2, 3, '2023-01-15'),
-(2, 3, 4, 1, '2023-02-20'),
-(3, 2, 1, 2, '2023-03-25'),
-(4, 4, 5, 4, '2023-04-10'),
-(5, 1, 2, 3, '2023-05-30'),
-(6, 3, 1, 2, '2023-06-05'),
-(7, 2, 2, 1, '2023-07-10'),
-(8, 4, 3, 4, '2023-08-15'),
-(9, 1, 1, 3, '2023-09-20'),
-(10, 3, 2, 2, '2023-10-25'),
-(11, 2, 3, 1, '2023-11-30'),
-(12, 4, 1, 4, '2023-12-05'),
-(13, 1, 2, 3, '2024-01-10'),
-(14, 3, 1, 2, '2024-02-15'),
-(15, 2, 2, 1, '2024-03-20'),
-(16, 4, 3, 4, '2024-04-25'),
-(17, 1, 1, 3, '2024-05-30'),
-(18, 3, 2, 2, '2024-06-05'),
-(19, 2, 3, 1, '2024-07-10'),
-(20, 4, 1, 4, '2024-08-15');
-(21, 2, 3, 1, '2024-09-02'),
-(22, 1, 2, 3, '2024-10-08'),
-(23, 3, 1, 2, '2024-11-15'),
-(24, 2, 3, 1, '2024-12-20'),
-(25, 1, 2, 3, '2025-01-25');
-(26, 3, 1, 2, '2023-02-15'),
-(27, 2, 3, 1, '2023-03-20'),
-(28, 4, 1, 4, '2023-04-25'),
-(29, 5, 3, 5, '2023-05-05'),
-
+INSERT INTO "Mantenimientos" VALUES (3001, 101, 1, 1001, 2001, '2023-01-15');
+INSERT INTO "Mantenimientos" VALUES (3002, 102, 2, 1002, 2002, '2023-02-20');
+INSERT INTO "Mantenimientos" VALUES (3003, 103, 3, 1003, 2003, '2023-03-25');
+INSERT INTO "Mantenimientos" VALUES (3004, 104, 4, 1004, 2004, '2023-04-30');
+INSERT INTO "Mantenimientos" VALUES (3005, 105, 5, 1005, 2005, '2023-05-05');
+INSERT INTO "Mantenimientos" VALUES (3006, 106, 6, 1006, 2006, '2023-06-10');
+INSERT INTO "Mantenimientos" VALUES (3007, 107, 7, 1007, 2007, '2023-07-15');
+INSERT INTO "Mantenimientos" VALUES (3008, 108, 8, 1008, 2008, '2023-08-20');
+INSERT INTO "Mantenimientos" VALUES (3009, 109, 9, 1009, 2009, '2023-09-25');
+INSERT INTO "Mantenimientos" VALUES (3010, 110, 10, 1010, 2010, '2023-10-30');
+INSERT INTO "Mantenimientos" VALUES (3011, 111, 11, 1011, 2001, '2023-11-05');
+INSERT INTO "Mantenimientos" VALUES (3012, 112, 12, 1012, 2002, '2023-12-10');
+INSERT INTO "Mantenimientos" VALUES (3013, 113, 13, 1013, 2003, '2024-01-15');
+INSERT INTO "Mantenimientos" VALUES (3014, 114, 14, 1014, 2004, '2024-02-20');
+INSERT INTO "Mantenimientos" VALUES (3015, 115, 15, 1015, 2005, '2024-03-25');
+INSERT INTO "Mantenimientos" VALUES (3016, 116, 16, 1016, 2006, '2024-04-30');
+INSERT INTO "Mantenimientos" VALUES (3017, 117, 17, 1017, 2007, '2024-05-05');
+INSERT INTO "Mantenimientos" VALUES (3018, 118, 18, 1018, 2008, '2024-06-10');
+INSERT INTO "Mantenimientos" VALUES (3019, 119, 19, 1019, 2009, '2024-07-15');
+INSERT INTO "Mantenimientos" VALUES (3020, 120, 20, 1020, 2010, '2024-08-20');
 
 -- Insercion de Datos para la Tabla HojalateriaPintura
-INSERT INTO HojalateriaPintura (IDAuto, IDCliente, IDEmpleado, IDServicio, FechaHojalateriaPintura) VALUES
-(1, 1, 2, 3, '2023-01-20'),
-(2, 3, 4, 1, '2023-02-25'),
-(3, 2, 1, 2, '2023-03-30'),
-(4, 4, 5, 4, '2023-04-15'),
-(5, 5, 3, 5, '2023-05-10'),
-(6, 16, 6, 3, '2023-01-06'),
-(7, 17, 7, 30, '2023-01-07'),
-(8, 18, 8, 3, '2023-01-08'),
-(9, 19, 9, 9, '2023-01-09'),
-(10, 10, 10, 10, '2023-01-10'),
-(11, 11, 11, 11, '2023-01-11'),
-(12, 12, 2, 12, '2023-01-12'),
-(13, 13, 2, 33, '2023-01-13'),
-(14, 14, 4, 14, '2023-01-14'),
-(15, 15, 5, 15, '2023-01-15'),
-(16, 16, 6, 16, '2023-01-16'),
-(17, 17, 7, 17, '2023-01-17'),
-(18, 18, 8, 18, '2023-01-18'),
-(19, 19, 9, 19, '2023-01-19'),
-(20, 10, 2, 20, '2023-01-20'),
-(21, 11, 1, 32, '2023-01-21'),
-(22, 12, 2, 32, '2023-01-22'),
-(23, 23, 2, 33, '2023-01-23'),
-(24, 24, 4, 24, '2023-01-24'),
-(25, 15, 5, 25, '2023-01-25');
+INSERT INTO "HojalateriaPintura" VALUES (4001, 121, 21, 1021, 2001, '2023-01-15');
+INSERT INTO "HojalateriaPintura" VALUES (4002, 122, 22, 1022, 2002, '2023-02-20');
+INSERT INTO "HojalateriaPintura" VALUES (4003, 123, 23, 1023, 2003, '2023-03-25');
+INSERT INTO "HojalateriaPintura" VALUES (4004, 124, 24, 1024, 2004, '2023-04-30');
+INSERT INTO "HojalateriaPintura" VALUES (4005, 125, 25, 1025, 2005, '2023-05-05');
+INSERT INTO "HojalateriaPintura" VALUES (4006, 126, 26, 1026, 2006, '2023-06-10');
+INSERT INTO "HojalateriaPintura" VALUES (4007, 127, 27, 1027, 2007, '2023-07-15');
+INSERT INTO "HojalateriaPintura" VALUES (4008, 128, 28, 1028, 2008, '2023-08-20');
+INSERT INTO "HojalateriaPintura" VALUES (4009, 129, 29, 1029, 2009, '2023-09-25');
+INSERT INTO "HojalateriaPintura" VALUES (4010, 130, 30, 1030, 2009, '2023-10-30');
+INSERT INTO "HojalateriaPintura" VALUES (4011, 131, 31, 1031, 2008, '2023-11-05');
+INSERT INTO "HojalateriaPintura" VALUES (4012, 132, 32, 1032, 2007, '2023-12-10');
+INSERT INTO "HojalateriaPintura" VALUES (4013, 133, 33, 1033, 2006, '2024-01-15');
+INSERT INTO "HojalateriaPintura" VALUES (4014, 134, 34, 1034, 2005, '2024-02-20');
+INSERT INTO "HojalateriaPintura" VALUES (4015, 135, 35, 1035, 2004, '2024-03-25');
+INSERT INTO "HojalateriaPintura" VALUES (4016, 136, 36, 1036, 2003, '2024-04-30');
+INSERT INTO "HojalateriaPintura" VALUES (4017, 137, 37, 1037, 2002, '2024-05-05');
+INSERT INTO "HojalateriaPintura" VALUES (4018, 138, 38, 1038, 2001, '2024-06-10');
+INSERT INTO "HojalateriaPintura" VALUES (4019, 139, 39, 1039, 2010, '2024-07-15');
+INSERT INTO "HojalateriaPintura" VALUES (4020, 140, 40, 1040, 2004, '2024-08-20');
 
 -- Insercion de Datos para la Tabla SegurosAuto
-INSERT INTO SegurosAuto (IDAuto, IDCliente, TipoSeguro, Cobertura, Precio) VALUES
-(1, 1, 'Seguro Basico', 'Cobertura limitada', 300.00),
-(2, 3, 'Seguro Completo', 'Cobertura amplia', 500.00),
-(3, 2, 'Seguro Basico', 'Cobertura limitada', 300.00),
-(4, 4, 'Seguro de Responsabilidad', 'Responsabilidad civil', 200.00),
-(5, 5, 'Seguro Completo', 'Cobertura amplia', 500.00);
-(6, 6, 'Seguro Basico', 'Cobertura limitada', 550.00),
-(7, 7, 'Seguro Completo', 'Cobertura total', 820.00),
-(8, 8, 'Seguro Terceros', 'Responsabilidad civil', 320.00),
-(9, 9, 'Seguro contra Robo', 'Cobertura contra robo', 620.00),
-(10, 10, 'Seguro a Todo Riesgo', 'Cobertura amplia', 920.00),
-(11, 11, 'Seguro Basico', 'Cobertura limitada', 510.00),
-(12, 12, 'Seguro Completo', 'Cobertura total', 830.00),
-(13, 13, 'Seguro Terceros', 'Responsabilidad civil', 310.00),
-(14, 14, 'Seguro contra Robo', 'Cobertura contra robo', 630.00),
-(15, 15, 'Seguro a Todo Riesgo', 'Cobertura amplia', 910.00),
-(16, 16, 'Seguro Basico', 'Cobertura limitada', 525.00),
-(17, 17, 'Seguro Completo', 'Cobertura total', 840.00),
-(18, 18, 'Seguro Terceros', 'Responsabilidad civil', 330.00),
-(19, 19, 'Seguro contra Robo', 'Cobertura contra robo', 640.00),
-(20, 20, 'Seguro a Todo Riesgo', 'Cobertura amplia', 930.00);
-(21, 21, 'Seguro Completo', 'Cobertura amplia con asistencia en carretera', 580.00),
-(22, 22, 'Seguro contra Robo', 'Cobertura contra robo y perdida total', 460.00),
-(23, 23, 'Seguro Basico', 'Responsabilidad civil', 330.00),
-(24, 24, 'Seguro Completo', 'Cobertura amplia con asistencia en carretera', 600.00),
-(25, 25, 'Seguro contra Robo', 'Cobertura contra robo y perdida total', 480.00);
+INSERT INTO "SegurosAuto" VALUES (1, 101, 1, 'Responsabilidad Civil', 'Basica', 300.00);
+INSERT INTO "SegurosAuto" VALUES (2, 102, 2, 'Cobertura Total', 'Amplia', 700.00);
+INSERT INTO "SegurosAuto" VALUES (3, 103, 3, 'Responsabilidad Civil', 'Basica', 320.00);
+INSERT INTO "SegurosAuto" VALUES (4, 104, 4, 'Cobertura Total', 'Amplia', 750.00);
+INSERT INTO "SegurosAuto" VALUES (5, 105, 5, 'Responsabilidad Civil', 'Basica', 310.00);
+INSERT INTO "SegurosAuto" VALUES (6, 106, 6, 'Cobertura Total', 'Amplia', 720.00);
+INSERT INTO "SegurosAuto" VALUES (7, 107, 7, 'Responsabilidad Civil', 'Basica', 330.00);
+INSERT INTO "SegurosAuto" VALUES (8, 108, 8, 'Cobertura Total', 'Amplia', 680.00);
+INSERT INTO "SegurosAuto" VALUES (9, 109, 9, 'Responsabilidad Civil', 'Basica', 340.00);
+INSERT INTO "SegurosAuto" VALUES (10, 110, 10, 'Cobertura Total', 'Amplia', 710.00);
+INSERT INTO "SegurosAuto" VALUES (11, 111, 11, 'Responsabilidad Civil', 'Basica', 325.00);
+INSERT INTO "SegurosAuto" VALUES (12, 112, 12, 'Cobertura Total', 'Amplia', 730.00);
+INSERT INTO "SegurosAuto" VALUES (13, 113, 13, 'Responsabilidad Civil', 'Basica', 315.00);
+INSERT INTO "SegurosAuto" VALUES (14, 114, 14, 'Cobertura Total', 'Amplia', 690.00);
+INSERT INTO "SegurosAuto" VALUES (15, 115, 15, 'Responsabilidad Civil', 'Basica', 335.00);
+INSERT INTO "SegurosAuto" VALUES (16, 116, 16, 'Cobertura Total', 'Amplia', 740.00);
+INSERT INTO "SegurosAuto" VALUES (17, 117, 17, 'Responsabilidad Civil', 'Basica', 305.00);
+INSERT INTO "SegurosAuto" VALUES (18, 118, 18, 'Cobertura Total', 'Amplia', 770.00);
+INSERT INTO "SegurosAuto" VALUES (19, 119, 19, 'Responsabilidad Civil', 'Basica', 310.00);
+INSERT INTO "SegurosAuto" VALUES (20, 120, 20, 'Cobertura Total', 'Amplia', 700.00);
     \end{lstlisting}    
 
     \subsection*{6. Evidencia de Restricciones de Integridad Referencial}
     % Incluir evidencias aquí
+    \begin{lstlisting}
+-- Relaciones de las tablas.
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDEmpleado") REFERENCES "Empleados" ("IDEmpleado");
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDServicio") REFERENCES "Servicios" ("IDServicio");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDEmpleado") REFERENCES "Empleados" ("IDEmpleado");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDServicio") REFERENCES "Servicios" ("IDServicio");
+ALTER TABLE "SegurosAuto" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
+ALTER TABLE "SegurosAuto" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
+    \end{lstlisting}
 
     \subsection*{7. Evidencia de Restricciones CHECK}
     % Incluir evidencias aquí
