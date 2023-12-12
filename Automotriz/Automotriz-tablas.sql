@@ -8,9 +8,9 @@ CREATE TABLE "Clientes" (
 
 CREATE TABLE "Autos" (
   "IDAuto" serial PRIMARY KEY,
-  "Modelo" ModeloAutomovil,
+  "Modelo" varchar(50) NOT NULL,
   "Marca" varchar(50) NOT NULL,
-  "AnioFabricacion" int NOT NULL CHECK("AnioFabricacion" > 1900),
+  "AnioFabricacion" int NOT NULL CHECK("AnioFabricacion" > 0),
   "Precio" decimal(10,2) NOT NULL CHECK("Precio" >= 0.0)
 );
 
@@ -65,3 +65,16 @@ CREATE TABLE "SegurosAuto" (
   FOREIGN KEY ("IDAuto") REFERENCES "Autos"("IDAuto") ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY ("IDCliente") REFERENCES "Clientes"("IDCliente") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- Relaciones de las tablas.
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDEmpleado") REFERENCES "Empleados" ("IDEmpleado");
+ALTER TABLE "Mantenimientos" ADD FOREIGN KEY ("IDServicio") REFERENCES "Servicios" ("IDServicio");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDEmpleado") REFERENCES "Empleados" ("IDEmpleado");
+ALTER TABLE "HojalateriaPintura" ADD FOREIGN KEY ("IDServicio") REFERENCES "Servicios" ("IDServicio");
+ALTER TABLE "SegurosAuto" ADD FOREIGN KEY ("IDAuto") REFERENCES "Autos" ("IDAuto");
+ALTER TABLE "SegurosAuto" ADD FOREIGN KEY ("IDCliente") REFERENCES "Clientes" ("IDCliente");
+
